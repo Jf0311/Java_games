@@ -63,16 +63,27 @@ public class GamePanel extends JPanel implements Runnable {
     public void draw (Graphics g){
         paddle1.draw(g);
         paddle2.draw(g);
+        ball.draw(g);
 
 
     }
     public void move (){
         paddle1.move();
         paddle2.move();
-//        ball.move();
+        ball.move();
 
     }
     public void checkCollision (){
+
+        //bounce ball off top & bottom window edges
+        if (ball.y <= 0 ){
+            ball.setYDirection(-ball.yVelocity);
+        }
+        if (ball.y >= GAME_HEIGHT - BALL_DIAMETER ){
+            ball.setYDirection(-ball.yVelocity);
+        }
+
+        // bounces ball off paddles
 
         //stops paddles at windows edges
         if (paddle1.y <=0)
@@ -100,7 +111,6 @@ public class GamePanel extends JPanel implements Runnable {
                 checkCollision();
                 repaint();
                 delta --;
-                System.out.println("TEST");
             }
         }
 
