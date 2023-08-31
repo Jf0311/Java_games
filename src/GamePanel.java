@@ -64,6 +64,7 @@ public class GamePanel extends JPanel implements Runnable {
         paddle1.draw(g);
         paddle2.draw(g);
         ball.draw(g);
+        score.draw(g);
 
 
     }
@@ -73,32 +74,32 @@ public class GamePanel extends JPanel implements Runnable {
         ball.move();
 
     }
-    public void checkCollision (){
+    public void checkCollision () {
 
         //bounce ball off top & bottom window edges
-        if (ball.y <= 0 ){
+        if (ball.y <= 0) {
             ball.setYDirection(-ball.yVelocity);
         }
-        if (ball.y >= GAME_HEIGHT - BALL_DIAMETER ){
+        if (ball.y >= GAME_HEIGHT - BALL_DIAMETER) {
             ball.setYDirection(-ball.yVelocity);
         }
 
         // bounces ball off paddles
 
-        if(ball.intersects(paddle1)){
+        if (ball.intersects(paddle1)) {
             ball.xVelocity = Math.abs(ball.xVelocity);
-            ball.xVelocity ++; //optional for more difficulty
-            if(ball.yVelocity > 0)
+            ball.xVelocity++; //optional for more difficulty
+            if (ball.yVelocity > 0)
                 ball.yVelocity++;
             else
                 ball.yVelocity--;
             ball.setXDirection(ball.xVelocity);
             ball.setYDirection(ball.yVelocity);
         }
-        if(ball.intersects(paddle2)) {
+        if (ball.intersects(paddle2)) {
             ball.xVelocity = Math.abs(ball.xVelocity);
-            ball.xVelocity ++; //optional for more difficulty
-            if(ball.yVelocity > 0)
+            ball.xVelocity++; //optional for more difficulty
+            if (ball.yVelocity > 0)
                 ball.yVelocity++;
             else
                 ball.yVelocity--;
@@ -108,35 +109,50 @@ public class GamePanel extends JPanel implements Runnable {
 
 
         //stops paddles at windows edges
-        if (paddle1.y <=0)
-            paddle1.y=0;
+        if (paddle1.y <= 0)
+            paddle1.y = 0;
         if (paddle1.y >= (GAME_HEIGHT - PADDLE_HEIGHT))
             paddle1.y = GAME_HEIGHT - PADDLE_HEIGHT;
-        if (paddle2.y <=0)
-            paddle2.y=0;
+        if (paddle2.y <= 0)
+            paddle2.y = 0;
         if (paddle2.y >= (GAME_HEIGHT - PADDLE_HEIGHT))
             paddle2.y = GAME_HEIGHT - PADDLE_HEIGHT;
 
+        // give a player 1 point and create new paddles & ball
+
+        if (ball.x <= 0) {
+            score.player2++;
+            newPaddles();
+            newBall();
+            System.out.println("player 2 : Score " + score.player2);
+        }
+        if (ball.x >= GAME_WIDTH - BALL_DIAMETER) {
+            score.player1++;
+            newPaddles();
+            newBall();
+            System.out.println("player 1 : Score " + score.player1);
+
+        }
     }
 
-    public void run(){
-        long lastTime = System.nanoTime();
-        double amountOfTicks = 60.0;
-        double ns = 1000000000 / amountOfTicks;
-        double delta = 0;
-        while(true){
-            long now = System.nanoTime();
-            delta += (now - lastTime)/ ns;
-            lastTime = now;
-            if (delta >= 1){
-                move();
-                checkCollision();
-                repaint();
-                delta --;
+        public void run() {
+            //game loop
+            long lastTime = System.nanoTime();
+            double amountOfTicks =60.0;
+            double ns = 1000000000 / amountOfTicks;
+            double delta = 0;
+            while(true) {
+                long now = System.nanoTime();
+                delta += (now -lastTime)/ns;
+                lastTime = now;
+                if(delta >=1) {
+                    move();
+                    checkCollision();
+                    repaint();
+                    delta--;
+                }
             }
         }
-
-    }
 
     public class AL extends KeyAdapter{
         public void keyPressed(KeyEvent e){
